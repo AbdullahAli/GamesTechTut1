@@ -63,7 +63,15 @@ void Asteroids::OnSpecialKeyPressed(int key, int x, int y)
 	switch (key)
 	{
 	// Default case - do nothing
-	default: break;
+		case GLUT_KEY_UP:
+			mSpaceship->Thrust(10);
+			break;
+		case GLUT_KEY_RIGHT:
+			mSpaceship->Rotate(-90);
+			break;
+		case GLUT_KEY_LEFT:
+			mSpaceship->Rotate(90);
+		default: break;
 	}
 }
 
@@ -71,8 +79,15 @@ void Asteroids::OnSpecialKeyReleased(int key, int x, int y)
 {
 	switch (key)
 	{
-	// Default case - do nothing
-	default: break;
+		case GLUT_KEY_UP:
+			mSpaceship->Thrust(0);
+			break;
+		case GLUT_KEY_RIGHT:
+			mSpaceship->Rotate(0);
+			break;
+		case GLUT_KEY_LEFT:
+			mSpaceship->Rotate(0);
+		default: break;
 	}
 }
 

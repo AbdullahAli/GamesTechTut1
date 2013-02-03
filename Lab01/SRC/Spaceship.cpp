@@ -58,6 +58,19 @@ void Spaceship::Render(void)
 	// Finish drawing closed shape
 	glEnd();
 
+	if(mThrust > 0)
+	{
+		glBegin(GL_LINE_STRIP);
+				// Set pen colour to dark orange
+				glColor3f(0.8, 0.4, 0.1);
+				// Add vertices of ship's flame
+				glVertex3f(-2,-1, 0);
+				glVertex3f(-4, 0, 0);
+				glVertex3f(-2, 1, 0);
+			// Finish drawing open line
+			glEnd();
+	}
+
 	// Enable lighting
 	glEnable(GL_LIGHTING);
 	// Call base class to render debug graphics if required
@@ -70,6 +83,9 @@ void Spaceship::Render(void)
 void Spaceship::Thrust(float t)
 {
 	mThrust = t;
+
+	mAcceleration.x = mThrust * cos(DEG2RAD*mAngle);
+	mAcceleration.y = mThrust * sin(DEG2RAD*mAngle);
 }
 
 /** Set the rotation. */
@@ -83,6 +99,20 @@ void Spaceship::Shoot(void)
 {
 	// Check the world exists
 	if (!mWorld) return;
+	// Construct a unit length vector in the direction the spaceship is headed
+	GLVector3f spaceship_heading(cos(DEG2RAD*mAngle), sin(DEG2RAD*mAngle), 0);
+	spaceship_heading.normalize();
+	// Calculate the point at the node of the spaceship from position and heading
+	GLVector3f bullet_position = mPosition + (spaceship_heading * 4);
+	// Calculate how fast the bullet should travel
+	float bullet_speed = 30;
+	// Construct a vector for the bullet's velocity
+	GLVector3f bullet_velocity = mVelocity + spaceship_heading * bullet_speed;
+	// Construct a new bullet
+	Bullet bullet = Bullet(bullet_position, bullet_velocity, mAcceleration, mAngle, 0, 2000);
+	shared_ptr<GameObject> b = make_shared<Bullet>(bullet);
+	// Add the new bullet to the game world
+	mWorld->AddObject(b);
 }
 
 bool Spaceship::CollisionTest(shared_ptr<GameObject> o)
